@@ -36,7 +36,9 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
       size: Array.isArray(size) ? size : JSON.parse(size || '[]'),
       color: Array.isArray(color) ? color : JSON.parse(color || '[]'),
       image: image || (req.file ? `/uploads/${req.file.filename}` : ''),
-      stock, badge, discount,
+      stock, 
+      badge: badge || 'NEW',
+      discount,
       seller: req.user.userId
     });
     await product.save();
