@@ -1,221 +1,135 @@
 # Deployment Guide
 
 ## Prerequisites
-- Node.js installed
-- MongoDB Atlas account (or MongoDB server)
-- Hosting platform account (Render, Railway, Heroku, etc.)
+- Node.js 18+ and npm 9+
+- MongoDB Atlas account (or MongoDB instance)
+- Vercel/Netlify account (for frontend)
+- Render/Railway/Heroku account (for backend)
 
-## Environment Variables
+## Backend Deployment (Render/Railway)
 
-### Backend (.env)
+### 1. Prepare Backend
+```bash
+cd backend
+npm install
+```
+
+### 2. Environment Variables
+Set these in your hosting platform:
 ```
 PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_random_jwt_secret
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_secure_random_string
 NODE_ENV=production
 FRONTEND_URL=https://your-frontend-domain.com
 ```
 
-### Frontend (.env)
-```
-REACT_APP_API_URL=https://your-backend-domain.com/api
-```
-
-## Deployment Steps
-
-### Option 1: Deploy to Render (Recommended)
-
-#### Backend Deployment
-1. Push code to GitHub
-2. Go to [Render Dashboard](https://dashboard.render.com/)
-3. Click "New +" → "Web Service"
-4. Connect your GitHub repository
-5. Configure:
-   - **Name**: fashion-store-api
-   - **Root Directory**: backend
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-6. Add Environment Variables (from Backend .env above)
-7. Click "Create Web Service"
-
-#### Frontend Deployment
-1. In Render Dashboard, click "New +" → "Static Site"
-2. Connect same GitHub repository
-3. Configure:
-   - **Name**: fashion-store-frontend
-   - **Root Directory**: frontend
-   - **Build Command**: `npm install && npm run build`
-   - **Publish Directory**: build
-4. Add Environment Variable:
-   - `REACT_APP_API_URL`: Your backend URL + /api
-5. Click "Create Static Site"
-
-### Option 2: Deploy to Railway
-
-#### Backend
-1. Go to [Railway](https://railway.app/)
-2. Click "New Project" → "Deploy from GitHub repo"
-3. Select your repository
-4. Add environment variables
-5. Set root directory to `backend`
+### 3. Deploy to Render
+1. Connect GitHub repository
+2. Select `backend` folder as root directory
+3. Build command: `npm install`
+4. Start command: `npm start`
+5. Add environment variables
 6. Deploy
 
-#### Frontend
-1. Build frontend locally: `cd frontend && npm run build`
-2. Deploy the build folder to Netlify/Vercel
-3. Set environment variable `REACT_APP_API_URL`
-
-### Option 3: Single Server Deployment (VPS)
-
-1. **Setup Server** (Ubuntu/Debian)
-```bash
-# Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# Install MongoDB
-sudo apt-get install -y mongodb
-
-# Install PM2
-sudo npm install -g pm2
-```
-
-2. **Clone and Setup**
-```bash
-git clone your-repo-url
-cd Kryptonix_Project
-
-# Backend setup
-cd backend
-npm install
-cp .env.example .env
-# Edit .env with production values
-
-# Frontend setup
-cd ../frontend
-npm install
-cp .env.example .env
-# Edit .env with production API URL
-npm run build
-
-# Start backend with PM2
-cd ../backend
-pm2 start server.js --name fashion-store-api
-pm2 save
-pm2 startup
-```
-
-3. **Setup Nginx**
-```bash
-sudo apt-get install nginx
-
-# Create Nginx config
-sudo nano /etc/nginx/sites-available/fashion-store
-```
-
-Add this configuration:
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        root /path/to/Kryptonix_Project/frontend/build;
-        try_files $uri /index.html;
-    }
-
-    location /api {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    location /uploads {
-        proxy_pass http://localhost:5000;
-    }
-}
-```
-
-```bash
-# Enable site
-sudo ln -s /etc/nginx/sites-available/fashion-store /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-4. **Setup SSL with Let's Encrypt**
-```bash
-sudo apt-get install certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.com
-```
-
-## MongoDB Atlas Setup
-
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a free cluster
-3. Create database user
-4. Whitelist IP addresses (0.0.0.0/0 for all IPs)
-5. Get connection string
-6. Replace in MONGODB_URI
-
-## Post-Deployment
-
-1. **Seed Database**
+### 4. Seed Database (One-time)
+After deployment, run:
 ```bash
 npm run seed
 ```
 
-2. **Test the Application**
-- Visit your frontend URL
-- Register a new account
-- Test all features
+## Frontend Deployment (Vercel/Netlify)
 
-3. **Monitor Logs**
+### 1. Prepare Frontend
 ```bash
-# If using PM2
-pm2 logs fashion-store-api
-
-# If using Render/Railway
-Check dashboard logs
+cd frontend
+npm install
 ```
 
-## Security Checklist
+### 2. Environment Variables
+Create `.env.production`:
+```
+VITE_API_URL=https://your-backend-domain.com/api
+VITE_API_BASE_URL=https://your-backend-domain.com
+```
 
-- ✅ Change JWT_SECRET to a strong random string
-- ✅ Use HTTPS (SSL certificate)
-- ✅ Set NODE_ENV=production
-- ✅ Whitelist specific IPs in MongoDB if possible
-- ✅ Enable CORS only for your frontend domain
-- ✅ Keep dependencies updated
-- ✅ Use environment variables for all secrets
+### 3. Deploy to Vercel
+```bash
+npm install -g vercel
+cd frontend
+vercel --prod
+```
+
+Or use Vercel dashboard:
+1. Import GitHub repository
+2. Select `frontend` folder
+3. Framework: Vite
+4. Build command: `npm run build`
+5. Output directory: `dist`
+6. Add environment variables
+7. Deploy
+
+### 4. Deploy to Netlify
+```bash
+cd frontend
+npm run build
+```
+Then drag `dist` folder to Netlify or use CLI:
+```bash
+npm install -g netlify-cli
+netlify deploy --prod --dir=dist
+```
+
+## Post-Deployment
+
+### Update CORS
+Update backend `.env`:
+```
+FRONTEND_URL=https://your-actual-frontend-domain.com
+```
+
+### Test Endpoints
+- Backend health: `https://your-backend.com/api/health`
+- Frontend: `https://your-frontend.com`
+
+### Create Demo Accounts
+1. Register a buyer account
+2. Register a seller account
+3. Test full flow
+
+## MongoDB Atlas Setup
+
+1. Create cluster at mongodb.com/cloud/atlas
+2. Create database user
+3. Whitelist IP: 0.0.0.0/0 (allow all)
+4. Get connection string
+5. Replace `<password>` with your password
+6. Add to backend environment variables
+
+## Security Checklist
+- ✅ Strong JWT_SECRET (32+ random characters)
+- ✅ MongoDB connection string secured
+- ✅ CORS configured with specific frontend URL
+- ✅ Environment variables not committed to git
+- ✅ HTTPS enabled on both frontend and backend
+- ✅ Rate limiting (optional, add express-rate-limit)
+
+## Monitoring
+- Check backend logs regularly
+- Monitor MongoDB Atlas metrics
+- Set up error tracking (Sentry, optional)
 
 ## Troubleshooting
 
-**Images not loading?**
-- Check REACT_APP_API_URL is correct
-- Verify uploads folder exists and has permissions
-
-**CORS errors?**
+### CORS Errors
 - Verify FRONTEND_URL in backend .env
-- Check CORS configuration in server.js
+- Check frontend API URLs
 
-**Database connection failed?**
-- Verify MONGODB_URI is correct
-- Check MongoDB Atlas IP whitelist
+### Database Connection Failed
+- Verify MongoDB Atlas IP whitelist
+- Check connection string format
 - Ensure database user has correct permissions
 
-## Maintenance
-
-```bash
-# Update dependencies
-npm update
-
-# Restart services
-pm2 restart fashion-store-api
-
-# Backup database
-mongodump --uri="your_mongodb_uri"
-```
+### Images Not Loading
+- Check if backend URL is correct in frontend .env
+- Verify uploads folder exists and is accessible

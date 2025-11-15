@@ -6,23 +6,48 @@
   * {
     @apply scroll-smooth;
   }
+
   body {
-    @apply antialiased;
+    @apply bg-dark-bg-primary text-dark-text-primary antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-dark-primary ring-offset-2 ring-offset-dark-bg-primary;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-bg-elevated;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-border hover:bg-dark-border-hover rounded-full;
   }
 }
 
-@layer utilities {
+@layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(28, 28, 31, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
-  .glass-dark {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+
+  .btn-primary {
+    @apply px-6 py-3 bg-dark-primary hover:bg-dark-primary-hover text-dark-bg-primary font-bold rounded-xl shadow-glow transition-all;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 bg-dark-bg-surface border border-dark-border rounded-lg text-dark-text-primary placeholder-dark-text-muted focus:border-dark-primary focus:outline-none focus:ring-2 focus:ring-dark-primary/20;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

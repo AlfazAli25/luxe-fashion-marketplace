@@ -1,40 +1,46 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+export default {
+  darkMode: 'class',
+  content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
+        dark: {
+          bg: {
+            primary: '#0A0A0B',
+            elevated: '#141416',
+            surface: '#1C1C1F',
+          },
+          primary: {
+            DEFAULT: '#00D9C0',
+            hover: '#00F5D4',
+          },
+          secondary: '#7C3AED',
+          accent: '#F59E0B',
+          success: '#10B981',
+          error: '#EF4444',
+          text: {
+            primary: '#F9FAFB',
+            secondary: '#D1D5DB',
+            muted: '#9CA3AF',
+          },
+          border: {
+            DEFAULT: '#27272A',
+            hover: '#3F3F46',
+          },
         },
       },
       boxShadow: {
-        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+        'dark-md': '0 4px 16px rgba(0, 0, 0, 0.5)',
+        'glow': '0 0 24px rgba(0, 217, 192, 0.3)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.5s ease-out',
-        'scale-in': 'scaleIn 0.3s ease-out',
+        'float': 'float 3s ease-in-out infinite',
       },
       keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(20px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        scaleIn: {
-          '0%': { transform: 'scale(0.95)', opacity: '0' },
-          '100%': { transform: 'scale(1)', opacity: '1' },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
     },

@@ -1,189 +1,183 @@
-# Fashion E-Commerce Platform - MERN Stack
+# LUXE Fashion Marketplace - MERN Stack
 
-A full-stack e-commerce website for buying and selling clothes built with MongoDB, Express, React, and Node.js.
+A premium dark-themed fashion e-commerce platform with 3D effects, built with MongoDB, Express, React, and Node.js.
 
-## Features
+## 🎨 Features
+
+### Dark Theme UI
+- Premium aesthetic with teal/cyan accents
+- Glassmorphism effects
+- Smooth Framer Motion animations
+- 3D product viewer (Three.js)
+- Fully responsive design
 
 ### For Buyers
-- Browse and search products by category
-- View detailed product information
-- Add items to cart with size and color selection
-- Secure checkout process
-- Track order history and status
+- Browse products with advanced filtering
+- 3D product previews
+- Shopping cart with animations
+- Secure checkout
+- Order tracking
 
 ### For Sellers
-- Create and manage product listings
-- Upload product images
-- Track inventory and stock
-- View and manage orders
-- Dashboard for business overview
+- Intuitive dashboard
+- Product management
+- Sales analytics
+- Order fulfillment
 
-### General Features
-- User authentication (JWT)
-- Beautiful, responsive UI with smooth animations
-- Role-based access (Buyer/Seller)
-- Real-time cart management
-- Image upload functionality
+## 🚀 Quick Start
 
-## Tech Stack
-
-**Frontend:**
-- React 18
-- React Router for navigation
-- Axios for API calls
-- React Icons
-- CSS3 with animations
-
-**Backend:**
-- Node.js & Express
-- MongoDB with Mongoose
-- JWT authentication
-- Bcrypt for password hashing
-- Multer for file uploads
-
-## Installation & Setup
-
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or Atlas)
-- npm or yarn
+**📖 See [QUICK_START.md](QUICK_START.md) for detailed setup instructions**
 
 ### Backend Setup
 
-1. Navigate to backend folder:
 ```bash
 cd backend
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
 
-3. Configure environment variables in `.env`:
-```
+# Create .env file
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/ecommerce
-JWT_SECRET=your_jwt_secret_key_here_change_in_production
-```
+JWT_SECRET=your_secret_key
 
-4. Start the backend server:
-```bash
 npm run dev
 ```
 
-Backend will run on http://localhost:5000
+Backend runs on: http://localhost:5000
 
 ### Frontend Setup
 
-1. Navigate to frontend folder:
 ```bash
 cd frontend
-```
-
-2. Install dependencies:
-```bash
 npm install
+npm run dev
 ```
 
-3. Start the React app:
-```bash
-npm start
-```
+Frontend runs on: http://localhost:3000
 
-Frontend will run on http://localhost:3000
+## 📦 Tech Stack
 
-## Usage
+**Frontend:**
+- React 18 + Vite
+- Tailwind CSS (Dark Theme)
+- Framer Motion
+- Three.js / React Three Fiber
+- Zustand (State Management)
+- Axios
 
-1. **Register an Account:**
-   - Choose between Buyer or Seller role
-   - Fill in your details
+**Backend:**
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT Authentication
+- Bcrypt
+- Multer (File Uploads)
 
-2. **As a Buyer:**
-   - Browse products on the Shop page
-   - Click on products to view details
-   - Add items to cart with preferred size and color
-   - Proceed to checkout and place orders
-   - View order history in Orders page
-
-3. **As a Seller:**
-   - Access Seller Dashboard
-   - Add new products with images
-   - Manage existing products (edit/delete)
-   - View incoming orders
-
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Authentication
-- POST `/api/auth/register` - Register new user
-- POST `/api/auth/login` - Login user
+- `POST /api/auth/register` - Register user
+- `POST /api/auth/login` - Login user
 
 ### Products
-- GET `/api/products` - Get all products
-- GET `/api/products/:id` - Get single product
-- POST `/api/products` - Create product (Seller only)
-- PUT `/api/products/:id` - Update product (Seller only)
-- DELETE `/api/products/:id` - Delete product (Seller only)
-- GET `/api/products/seller/my-products` - Get seller's products
+- `GET /api/products` - Get all products
+- `GET /api/products/:id` - Get single product
+- `POST /api/products` - Create product (Seller)
+- `PUT /api/products/:id` - Update product (Seller)
+- `DELETE /api/products/:id` - Delete product (Seller)
 
 ### Cart
-- GET `/api/cart` - Get user's cart
-- POST `/api/cart/add` - Add item to cart
-- DELETE `/api/cart/remove/:itemId` - Remove item from cart
-- DELETE `/api/cart/clear` - Clear cart
+- `GET /api/cart` - Get user cart
+- `POST /api/cart/add` - Add to cart
+- `DELETE /api/cart/remove/:itemId` - Remove from cart
+- `DELETE /api/cart/clear` - Clear cart
 
 ### Orders
-- POST `/api/orders` - Create new order
-- GET `/api/orders/my-orders` - Get buyer's orders
-- GET `/api/orders/seller-orders` - Get seller's orders
-- PUT `/api/orders/:id/status` - Update order status
+- `POST /api/orders` - Create order
+- `GET /api/orders/my-orders` - Get buyer orders
+- `GET /api/orders/seller-orders` - Get seller orders
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 Kryptonix_Project/
 ├── backend/
-│   ├── models/          # MongoDB schemas
-│   ├── routes/          # API routes
-│   ├── middleware/      # Auth & upload middleware
-│   ├── uploads/         # Product images
-│   ├── server.js        # Express server
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   └── server.js
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── stores/
+│   │   └── utils/
 │   └── package.json
-│
-└── frontend/
-    ├── public/
-    ├── src/
-    │   ├── components/  # Reusable components
-    │   ├── pages/       # Page components
-    │   ├── context/     # React context (Auth, Cart)
-    │   ├── utils/       # API utilities
-    │   ├── App.js
-    │   └── index.js
-    └── package.json
+└── README.md
 ```
 
-## Screenshots & Features
+## 🎨 Design System
 
-- **Gradient UI:** Beautiful gradient backgrounds and smooth transitions
-- **Responsive Design:** Works on desktop, tablet, and mobile
-- **Smooth Animations:** Fade-in effects and hover animations
-- **User-Friendly:** Intuitive navigation and clear CTAs
-- **Secure:** JWT authentication and password hashing
+- **Primary**: #00D9C0 (Teal)
+- **Secondary**: #7C3AED (Purple)
+- **Background**: #0A0A0B (Deep Black)
+- **Typography**: Inter
 
-## Future Enhancements
+## 🔒 Security
 
-- Payment gateway integration (Stripe/PayPal)
-- Product reviews and ratings
-- Wishlist functionality
-- Advanced search and filters
-- Email notifications
-- Admin panel for platform management
-- Social media integration
+- JWT authentication
+- Password hashing with bcrypt
+- Protected routes
+- CORS enabled
 
-## License
+## 📱 Responsive
 
-MIT License - feel free to use this project for learning or commercial purposes.
+- Mobile-first design
+- Tablet optimized
+- Desktop enhanced
 
-## Support
+## 🚢 Deployment
 
-For issues or questions, please create an issue in the repository.
+### Quick Deploy
+
+**Backend (Render/Railway):**
+1. Connect GitHub repository
+2. Set environment variables (see `.env.example`)
+3. Deploy from `backend` folder
+4. Run seed script: `npm run seed`
+
+**Frontend (Vercel/Netlify):**
+1. Connect GitHub repository
+2. Set build command: `npm run build`
+3. Set output directory: `dist`
+4. Add environment variables (see `.env.example`)
+5. Deploy
+
+**See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions**
+
+### Environment Variables
+
+**Backend (.env):**
+```
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret_key
+NODE_ENV=production
+FRONTEND_URL=https://your-frontend-url.com
+```
+
+**Frontend (.env):**
+```
+VITE_API_URL=https://your-backend-url.com/api
+VITE_API_BASE_URL=https://your-backend-url.com
+```
+
+## 📄 License
+
+MIT
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Open pull request
