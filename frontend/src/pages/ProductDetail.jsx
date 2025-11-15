@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import API, { API_BASE_URL } from '../utils/api';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
+import Toast from '../components/Toast';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isLoved, setIsLoved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showToast, setShowToast] = useState(false);
   const addItem = useCartStore(state => state.addItem);
   const user = useAuthStore(state => state.user);
 
@@ -44,7 +46,7 @@ const ProductDetail = () => {
       return;
     }
     await addItem(product._id, quantity, selectedSize, selectedColor);
-    alert('Added to cart!');
+    setShowToast(true);
   };
 
   if (loading) {
@@ -72,7 +74,9 @@ const ProductDetail = () => {
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
   return (
-    <div className="min-h-screen bg-dark-bg-primary py-12">
+    <>
+      {showToast && <Toast message="Added to cart!" onClose={() => setShowToast(false)} />}
+      <div className="min-h-screen bg-dark-bg-primary py-12">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -249,6 +253,7 @@ const ProductDetail = () => {
         </motion.div>
       </div>
     </div>
+    </>
   );
 };
 

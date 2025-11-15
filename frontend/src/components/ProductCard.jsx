@@ -6,11 +6,13 @@ import { useAuthStore } from '../stores/authStore';
 import { useState } from 'react';
 import { API_BASE_URL } from '../utils/api';
 import Tooltip from './Tooltip';
+import Toast from './Toast';
 
 const ProductCard = ({ product, index = 0 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoved, setIsLoved] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const addItem = useCartStore(state => state.addItem);
   const user = useAuthStore(state => state.user);
   const navigate = useNavigate();
@@ -32,7 +34,10 @@ const ProductCard = ({ product, index = 0 }) => {
     setIsAdding(true);
     try {
       await addItem(product._id, 1, product.size?.[0] || 'M', product.color?.[0] || 'Black');
-      setTimeout(() => setIsAdding(false), 1000);
+      setTimeout(() => {
+        setIsAdding(false);
+        setShowToast(true);
+      }, 1000);
     } catch (error) {
       setIsAdding(false);
       console.error('Error adding to cart:', error);
@@ -49,7 +54,9 @@ const ProductCard = ({ product, index = 0 }) => {
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
   return (
-    <motion.article
+    <>
+      {showToast && <Toast message="Added to cart!" onClose={() => setShowToast(false)} />}
+      <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
@@ -236,6 +243,7 @@ const ProductCard = ({ product, index = 0 }) => {
         </div>
       </Link>
     </motion.article>
+    </>
   );
 };
 

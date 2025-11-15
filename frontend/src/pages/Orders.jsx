@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FiPackage, FiTruck, FiCheckCircle } from 'react-icons/fi';
+import { FiPackage, FiTruck, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import API, { API_BASE_URL } from '../utils/api';
 
@@ -19,6 +19,17 @@ const Orders = () => {
     } catch (error) {
       console.error('Error fetching orders:', error);
       setLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (!confirm('Are you sure you want to cancel this order?')) return;
+    
+    try {
+      await API.put(`/orders/${orderId}/cancel`);
+      setOrders(orders.filter(order => order._id !== orderId));
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to cancel order');
     }
   };
 
@@ -123,11 +134,22 @@ const Orders = () => {
                     <p>{order.shippingAddress.street}, {order.shippingAddress.city}</p>
                     <p>{order.shippingAddress.state} {order.shippingAddress.zipCode}, {order.shippingAddress.country}</p>
                   </div>
-                  <div className="text-center md:text-right">
-                    <strong className="block text-dark-text-primary mb-2 text-base">Total Amount:</strong>
-                    <p className="text-3xl font-bold bg-gradient-to-r from-dark-primary to-dark-secondary bg-clip-text text-transparent">
-                      ${order.totalAmount.toFixed(2)}
-                    </p>
+                  <div className="text-center md:text-right space-y-3">
+                    <div>
+                      <strong className="block text-dark-text-primary mb-2 text-base">Total Amount:</strong>
+                      <p className="text-3xl font-bold bg-gradient-to-r from-dark-primary to-dark-secondary bg-clip-text text-transparent">
+                        ${order.totalAmount.toFixed(2)}
+                      </p>
+                    </div>
+                    {order.status !== 'delivered' && order.status !== 'cancelled' && (
+                      <button
+                        onClick={() => handleCancelOrder(order._id)}
+                        className="px-4 py-2 bg-dark-error hover:bg-red-600 text-white rounded-lg font-semibold flex items-center gap-2 transition-all"
+                      >
+                        <FiXCircle size={18} />
+                        Cancel Order
+                      </button>
+                    )}
                   </div>
                 </div>
               </motion.div>

@@ -7,8 +7,20 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -40,10 +52,21 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.get('/api/seed', async (req, res) => {
+  try {
+    const autoSeed = require('./autoSeed');
+    await autoSeed();
+    res.json({ message: 'Seed completed' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/cart', require('./routes/cart'));
+app.use('/api/payment', require('./routes/payment'));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -30,13 +30,14 @@ router.get('/:id', async (req, res) => {
 router.post('/', auth, upload.single('image'), async (req, res) => {
   try {
     if (req.user.role !== 'seller') return res.status(403).json({ message: 'Only sellers can add products' });
-    const { name, description, price, category, size, color, stock } = req.body;
+    const { name, description, price, category, size, color, stock, badge, discount, image } = req.body;
     const product = new Product({
       name, description, price, category,
-      size: JSON.parse(size || '[]'),
-      color: JSON.parse(color || '[]'),
-      image: req.file ? `/uploads/${req.file.filename}` : '',
-      stock, seller: req.user.userId
+      size: Array.isArray(size) ? size : JSON.parse(size || '[]'),
+      color: Array.isArray(color) ? color : JSON.parse(color || '[]'),
+      image: image || (req.file ? `/uploads/${req.file.filename}` : ''),
+      stock, badge, discount,
+      seller: req.user.userId
     });
     await product.save();
     res.status(201).json(product);

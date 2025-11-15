@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../stores/cartStore';
 import API, { API_BASE_URL } from '../utils/api';
+import StripePayment from '../components/StripePayment';
 
 const Checkout = () => {
   const { items, clearCart, getTotal } = useCartStore();
@@ -16,11 +17,16 @@ const Checkout = () => {
     country: ''
   });
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
 
   const total = getTotal();
 
-  const handleSubmit = async (e) => {
+  const handleAddressSubmit = (e) => {
     e.preventDefault();
+    setStep(2);
+  };
+
+  const handlePaymentSuccess = async () => {
     setLoading(true);
 
     try {
@@ -38,12 +44,10 @@ const Checkout = () => {
       });
 
       clearCart();
-      alert('Order placed successfully!');
-      navigate('/orders');
+      navigate('/payment-success');
     } catch (error) {
       console.error('Error placing order:', error);
-      alert('Failed to place order');
-      setLoading(false);
+      navigate('/payment-failed');
     }
   };
 
@@ -65,16 +69,30 @@ const Checkout = () => {
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Checkout Form */}
-          <motion.form
-            onSubmit={handleSubmit}
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-2 bg-dark-bg-elevated p-8 md:p-10 rounded-3xl shadow-dark-md"
           >
-            <div className="flex items-center gap-3 mb-8">
-              <FiMapPin className="text-dark-primary" size={28} />
-              <h2 className="text-3xl font-bold text-dark-text-primary">Shipping Address</h2>
+            {/* Step Indicator */}
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <div className={`flex items-center gap-2 ${step >= 1 ? 'text-dark-primary' : 'text-dark-text-muted'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 1 ? 'bg-dark-primary text-dark-bg-primary' : 'bg-dark-bg-surface'}`}>1</div>
+                <span className="font-semibold">Address</span>
+              </div>
+              <div className="w-12 h-0.5 bg-dark-border" />
+              <div className={`flex items-center gap-2 ${step >= 2 ? 'text-dark-primary' : 'text-dark-text-muted'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 2 ? 'bg-dark-primary text-dark-bg-primary' : 'bg-dark-bg-surface'}`}>2</div>
+                <span className="font-semibold">Payment</span>
+              </div>
             </div>
+
+            {step === 1 ? (
+              <form onSubmit={handleAddressSubmit}>
+                <div className="flex items-center gap-3 mb-8">
+                  <FiMapPin className="text-dark-primary" size={28} />
+                  <h2 className="text-3xl font-bold text-dark-text-primary">Shipping Address</h2>
+                </div>
 
             <div className="space-y-6">
               <div>
@@ -141,25 +159,30 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full btn-primary py-5 text-lg mt-8 flex items-center justify-center gap-3"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-6 h-6 border-2 border-dark-bg-primary border-t-transparent rounded-full animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <FiCreditCard size={24} />
-                    Place Order
-                  </>
-                )}
-              </button>
-            </div>
-          </motion.form>
+                <button
+                  type="submit"
+                  className="w-full btn-primary py-5 text-lg mt-8"
+                >
+                  Continue to Payment
+                </button>
+              </div>
+            </form>
+            ) : (
+              <div>
+                <button
+                  onClick={() => setStep(1)}
+                  className="text-dark-primary hover:underline mb-6"
+                >
+                  ← Back to Address
+                </button>
+                <StripePayment 
+                  amount={total} 
+                  onSuccess={handlePaymentSuccess}
+                  onError={() => navigate('/payment-failed')}
+                />
+              </div>
+            )}
+          </motion.div>
 
           {/* Order Summary */}
           <motion.div

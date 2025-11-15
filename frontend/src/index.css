@@ -40,6 +40,10 @@
     @apply px-6 py-3 bg-dark-primary hover:bg-dark-primary-hover text-dark-bg-primary font-bold rounded-xl shadow-glow transition-all;
   }
 
+  .btn-secondary {
+    @apply px-6 py-3 bg-dark-bg-surface hover:bg-dark-border text-dark-text-primary font-bold rounded-xl border border-dark-border transition-all;
+  }
+
   .input {
     @apply w-full px-4 py-3 bg-dark-bg-surface border border-dark-border rounded-lg text-dark-text-primary placeholder-dark-text-muted focus:border-dark-primary focus:outline-none focus:ring-2 focus:ring-dark-primary/20;
   }

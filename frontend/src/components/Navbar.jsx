@@ -51,7 +51,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <Tooltip text="Search" position="bottom">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -66,7 +66,7 @@ const Navbar = () => {
                 <Link to="/cart" className="relative p-2 text-dark-text-secondary hover:text-dark-primary transition-colors">
                   <FiShoppingCart size={22} />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-dark-error text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute top-5 -right-6 w-5 h-5 bg-dark-error text-white text-xs font-bold rounded-full flex items-center justify-center">
                       {itemCount}
                     </span>
                   )}
@@ -75,11 +75,11 @@ const Navbar = () => {
             )}
 
             {user ? (
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="hidden lg:flex items-center gap-2">
                 <Tooltip text={user.role === 'seller' ? 'Dashboard' : 'Orders'} position="bottom">
-                  <Link to={user.role === 'seller' ? '/seller/dashboard' : '/orders'} className="flex items-center gap-2 px-4 py-2 bg-dark-bg-surface hover:bg-dark-border rounded-lg transition-colors">
-                    <FiUser size={18} />
-                    <span className="text-dark-text-primary text-sm font-medium">{user.name}</span>
+                  <Link to={user.role === 'seller' ? '/seller/dashboard' : '/orders'} className="flex items-center gap-2 px-3 py-2 bg-dark-bg-surface hover:bg-dark-border rounded-lg transition-colors">
+                    <FiUser size={16} />
+                    <span className="text-dark-text-primary text-sm font-medium whitespace-nowrap">{user.name}</span>
                   </Link>
                 </Tooltip>
                 <Tooltip text="Logout" position="bottom">
