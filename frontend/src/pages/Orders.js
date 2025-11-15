@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import API, { API_BASE_URL } from '../utils/api';
+import { motion } from 'framer-motion';
+import { FiPackage, FiTruck, FiCheckCircle } from 'react-icons/fi';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -22,66 +24,111 @@ const Orders = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'bg-orange-500',
-      processing: 'bg-blue-500',
-      shipped: 'bg-purple-500',
-      delivered: 'bg-green-500',
-      cancelled: 'bg-red-500'
+      pending: 'from-orange-500 to-yellow-500',
+      processing: 'from-blue-500 to-cyan-500',
+      shipped: 'from-purple-500 to-pink-500',
+      delivered: 'from-green-500 to-emerald-500',
+      cancelled: 'from-red-500 to-rose-500'
     };
-    return colors[status] || 'bg-gray-500';
+    return colors[status] || 'from-gray-500 to-gray-600';
   };
 
-  if (loading) return <div className="text-center py-12 text-xl">Loading orders...</div>;
+  const getStatusIcon = (status) => {
+    switch(status) {
+      case 'pending': return <FiPackage size={18} />;
+      case 'processing': return <FiPackage size={18} />;
+      case 'shipped': return <FiTruck size={18} />;
+      case 'delivered': return <FiCheckCircle size={18} />;
+      default: return <FiPackage size={18} />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">My Orders</h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-8"
+        >
+          My Orders
+        </motion.h1>
         
         {orders.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl shadow-lg">
-            <p className="text-xl text-gray-600">You haven't placed any orders yet</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20 bg-white rounded-3xl shadow-glass"
+          >
+            <FiPackage className="mx-auto mb-6 text-gray-300" size={80} />
+            <p className="text-2xl font-bold text-gray-800 mb-2">No orders yet</p>
+            <p className="text-gray-600">You haven't placed any orders</p>
+          </motion.div>
         ) : (
           <div className="space-y-6">
-            {orders.map(order => (
-              <div key={order._id} className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div className="flex justify-between items-center p-6 bg-gray-50 border-b">
+            {orders.map((order, index) => (
+              <motion.div 
+                key={order._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white rounded-3xl shadow-glass overflow-hidden"
+              >
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-gradient-to-r from-gray-50 to-white border-b gap-4">
                   <div>
-                    <p className="font-semibold text-gray-800">Order #{order._id.slice(-8)}</p>
-                    <p className="text-gray-600 text-sm">{new Date(order.createdAt).toLocaleDateString()}</p>
+                    <p className="font-bold text-gray-800 text-lg">Order #{order._id.slice(-8).toUpperCase()}</p>
+                    <p className="text-gray-600 text-sm">{new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                   </div>
-                  <span className={`${getStatusColor(order.status)} text-white px-4 py-2 rounded-full font-semibold text-sm capitalize`}>
+                  <span className={`bg-gradient-to-r ${getStatusColor(order.status)} text-white px-5 py-2.5 rounded-xl font-semibold text-sm capitalize flex items-center gap-2 shadow-soft`}>
+                    {getStatusIcon(order.status)}
                     {order.status}
                   </span>
                 </div>
                 
                 <div className="p-6 space-y-4">
                   {order.items.map((item, idx) => (
-                    <div key={idx} className="flex gap-4 items-center">
-                      <img src={item.product?.image?.startsWith('http') ? item.product.image : `${API_BASE_URL}${item.product?.image}`} alt={item.product?.name} className="w-20 h-20 object-cover rounded-lg" />
+                    <motion.div 
+                      key={idx}
+                      whileHover={{ x: 4 }}
+                      className="flex gap-4 items-center p-4 bg-gray-50 rounded-2xl"
+                    >
+                      <img 
+                        src={item.product?.image?.startsWith('http') ? item.product.image : `${API_BASE_URL}${item.product?.image}`} 
+                        alt={item.product?.name} 
+                        className="w-20 h-20 object-cover rounded-xl shadow-soft" 
+                      />
                       <div className="flex-1">
-                        <h4 className="text-lg font-semibold text-gray-800">{item.product?.name}</h4>
+                        <h4 className="text-lg font-bold text-gray-800">{item.product?.name}</h4>
                         <p className="text-gray-600 text-sm">Size: {item.size} | Color: {item.color}</p>
                         <p className="text-gray-600 text-sm">Quantity: {item.quantity}</p>
                       </div>
-                      <p className="font-semibold text-indigo-600 text-lg">${item.price}</p>
-                    </div>
+                      <p className="font-bold text-blue-600 text-xl">${item.price}</p>
+                    </motion.div>
                   ))}
                 </div>
                 
-                <div className="flex justify-between p-6 bg-gray-50 border-t">
+                <div className="flex flex-col md:flex-row justify-between p-6 bg-gradient-to-r from-gray-50 to-white border-t gap-6">
                   <div className="text-gray-600 text-sm">
-                    <strong className="block text-gray-800 mb-2">Shipping Address:</strong>
+                    <strong className="block text-gray-800 mb-2 text-base">Shipping Address:</strong>
                     <p>{order.shippingAddress.street}, {order.shippingAddress.city}</p>
                     <p>{order.shippingAddress.state} {order.shippingAddress.zipCode}, {order.shippingAddress.country}</p>
                   </div>
-                  <div className="text-right">
-                    <strong className="block text-gray-800 mb-1">Total:</strong>
-                    <p className="text-2xl font-bold text-gray-800">${order.totalAmount.toFixed(2)}</p>
+                  <div className="text-center md:text-right">
+                    <strong className="block text-gray-800 mb-2 text-base">Total Amount:</strong>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      ${order.totalAmount.toFixed(2)}
+                    </p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

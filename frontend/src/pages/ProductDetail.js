@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import API, { API_BASE_URL } from '../utils/api';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
+import { motion } from 'framer-motion';
+import { FiShoppingCart, FiUser } from 'react-icons/fi';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -53,81 +55,123 @@ const ProductDetail = () => {
     alert('Added to cart!');
   };
 
-  if (!product) return <div className="text-center py-12 text-xl">Loading...</div>;
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid md:grid-cols-2 gap-12 bg-white p-8 rounded-2xl shadow-xl">
-          <div className="h-[500px] rounded-xl overflow-hidden bg-gray-100">
-            <img src={getImageForColor()} alt={product.name} className="w-full h-full object-cover transition-all duration-500" />
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid md:grid-cols-2 gap-12 bg-white p-8 md:p-12 rounded-3xl shadow-glass"
+        >
+          <motion.div 
+            className="h-[500px] rounded-2xl overflow-hidden bg-gray-100 shadow-soft"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+          >
+            <img 
+              src={getImageForColor()} 
+              alt={product.name} 
+              className="w-full h-full object-cover" 
+            />
+          </motion.div>
           
-          <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">{product.name}</h1>
-            <p className="text-indigo-600 font-semibold mb-4">{product.category}</p>
-            <p className="text-4xl font-bold text-gray-800 mb-8">${product.price}</p>
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-5xl font-bold text-gray-800 mb-3">{product.name}</h1>
+              <p className="text-lg font-semibold text-blue-600 mb-4">{product.category}</p>
+              <p className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                ${product.price}
+              </p>
+            </div>
             
-            <div className="mb-8 pb-8 border-b">
-              <h3 className="text-xl font-semibold mb-2">Description</h3>
+            <div className="py-6 border-y border-gray-200">
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Description</h3>
               <p className="text-gray-600 leading-relaxed">{product.description}</p>
             </div>
 
             {product.size?.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-800 mb-3">Size</h4>
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Size</h4>
                 <div className="flex gap-3 flex-wrap">
                   {product.size.map(size => (
-                    <button
+                    <motion.button
                       key={size}
-                      className={`px-6 py-2 border-2 rounded-lg font-semibold transition ${selectedSize === size ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-300 hover:border-indigo-600'}`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                        selectedSize === size 
+                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
                       onClick={() => setSelectedSize(size)}
                     >
                       {size}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
             )}
 
             {product.color?.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-800 mb-3">Color</h4>
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Color</h4>
                 <div className="flex gap-3 flex-wrap">
                   {product.color.map(color => (
-                    <button
+                    <motion.button
                       key={color}
-                      className={`px-6 py-2 border-2 rounded-lg font-semibold transition ${selectedColor === color ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-300 hover:border-indigo-600'}`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                        selectedColor === color 
+                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
                       onClick={() => setSelectedColor(color)}
                     >
                       {color}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="mb-6">
-              <h4 className="font-semibold text-gray-800 mb-3">Quantity</h4>
+            <div>
+              <h4 className="font-bold text-gray-800 mb-3">Quantity</h4>
               <input
                 type="number"
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value))}
-                className="w-24 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                className="w-32 px-4 py-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-semibold"
               />
             </div>
 
-            <button onClick={handleAddToCart} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-lg font-semibold text-lg hover:-translate-y-1 hover:shadow-xl transition mb-8">
+            <motion.button 
+              onClick={handleAddToCart}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-5 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+            >
+              <FiShoppingCart size={24} />
               Add to Cart
-            </button>
+            </motion.button>
 
-            <div className="pt-8 border-t">
-              <h4 className="font-semibold text-gray-600 mb-2">Seller</h4>
-              <p className="font-semibold text-gray-800">{product.seller?.name}</p>
+            <div className="pt-6 border-t border-gray-200">
+              <h4 className="font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                <FiUser /> Seller
+              </h4>
+              <p className="font-bold text-gray-800 text-lg">{product.seller?.name}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
